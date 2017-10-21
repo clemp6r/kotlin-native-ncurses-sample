@@ -1,141 +1,42 @@
+import engine.Board
+import engine.Game
+import engine.Keys
 import kotlinx.cinterop.*
 import ncurses.*
-
-data class Board(
-        val rows: MutableList<MutableList<Boolean>>
-) {
-    val nRows = rows.size
-    val nCols = rows[0].size
-
-    var currentRow = 0
-    var currentCol = 0
-
-    var lastMoveIsRow = false
-
-    fun moveUp() {
-        if (lastMoveIsRow) {
-            if (currentRow > 0) {
-                currentRow--
-            }
-        } else {
-            lastMoveIsRow = true
-        }
-
-    }
-
-    fun moveDown() {
-        if (lastMoveIsRow) {
-            if (currentRow < nRows - 1) {
-                currentRow++
-            }
-        } else {
-            lastMoveIsRow = true
-        }
-
-    }
-
-    fun moveLeft() {
-        if (lastMoveIsRow) {
-            lastMoveIsRow = false
-        } else {
-            if (currentCol > 0) {
-                currentCol--
-            }
-        }
-
-    }
-
-    fun moveRight() {
-        if (lastMoveIsRow) {
-            lastMoveIsRow = false
-        } else {
-            if (currentCol < nCols - 1) {
-                currentCol++
-            }
-        }
-    }
-
-    fun toggle() {
-        if (lastMoveIsRow) {
-            toggleRow()
-        } else {
-            toggleCol()
-        }
-    }
-
-    private fun toggleRow() {
-        rows[currentRow] = rows[currentRow].map { !it }.toMutableList()
-    }
-
-    private fun toggleCol() {
-        rows.forEach { row ->
-            row[currentCol] = !row[currentCol]
-        }
-    }
-}
 
 val boardRow = 1
 val boardCol = 2
 
-var board = Board(mutableListOf(
-        mutableListOf(true, true, false),
-        mutableListOf(false, false, true),
-        mutableListOf(true, true, false)
-))
-
-enum class Keys(val code: Int) {
-    Q('q'.toInt()),
-    ECHAP(27),
-    ENTER(10),
-    SPACE(32),
-    UP(259),
-    DOWN(258),
-    LEFT(260),
-    RIGHT(261)
-}
-
-val echap = 27
-
-val exitKeys = setOf(Keys.Q, Keys.ECHAP).map { it.code }
+val keyMap = mapOf(
+        'q'.toInt() to Keys.Q,
+        27 to Keys.ECHAP,
+        10 to Keys.ENTER,
+        32 to Keys.SPACE,
+        259 to Keys.UP,
+        258 to Keys.DOWN,
+        260 to Keys.LEFT,
+        261 to Keys.RIGHT
+)
 
 fun main(args: Array<String>) {
+    val game = Game(
+            {
+                val keyCode = getch()
+                keyMap[keyCode]
+            }, {
+        clear()
+        printBoard(it)
+    }
+    )
+
     initscr()
     noecho()
     keypad(stdscr, true)
 
     hideCursor()
-
-    var lastKey: Int? = null
-    while (!exitKeys.contains(lastKey)) {
-        clear()
-
-        if (lastKey != null) {
-//            printw(lastKey.toInt().toString())
-        }
-
-        printBoard(board)
-
-        move(0, 0)
-        lastKey = getch()
-
-        handleKey(lastKey)
-    }
-
-//    refresh()
-
+    game.run()
 
     endwin()
-}
-
-private fun handleKey(key: Int) {
-    when (key) {
-        Keys.UP.code -> board.moveUp()
-        Keys.DOWN.code -> board.moveDown()
-        Keys.LEFT.code -> board.moveLeft()
-        Keys.RIGHT.code -> board.moveRight()
-        Keys.SPACE.code -> board.toggle()
-        Keys.ENTER.code -> board.toggle()
-    }
 }
 
 private fun hideCursor() {

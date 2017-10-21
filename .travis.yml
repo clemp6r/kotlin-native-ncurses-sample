@@ -2,5 +2,4 @@ language: java
 before_install:
   - sudo apt-get -qq update
   - sudo apt-get install -y libncurses5-dev
-script:
-  - bundle exec ./gradlew build
+script: ./gradlew build

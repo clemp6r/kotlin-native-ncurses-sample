@@ -7,18 +7,18 @@ buildscript {
     }
 
     dependencies {
-        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.3.3"
+        classpath "org.jetbrains.kotlin:kotlin-native-gradle-plugin:0.3.4"
     }
 }
 
 apply plugin: 'konan'
 
-konanInterop {
-    ncurses
-}
-
 konanArtifacts {
-    Test {
-        useInterop 'ncurses'
+    interop('ncurses')
+
+    program('Test') {
+        libraries {
+            artifact 'ncurses'
+        }
     }
 }

@@ -54,10 +54,10 @@ private fun printBoard(board: Board) {
 
     if (board.lastMoveIsRow) {
         move(board.currentRow + boardRow + 1, boardCol + board.nCols + 4)
-        addch('<'.toInt())
+        printCh('<')
     } else {
         move(boardRow, boardCol + board.currentCol * 2 + 1)
-        addch('v'.toInt())
+        printCh('v')
     }
 
     for (row in 0 until board.nRows) {
@@ -65,9 +65,9 @@ private fun printBoard(board: Board) {
             move(boardRow + 1 + row, boardCol + 1 + column * 2)
 
             if (board.rows[row][column]) {
-                addch('*'.toInt())
+                printCh('*')
             } else {
-                addch('.'.toInt())
+                printCh('.')
             }
         }
     }

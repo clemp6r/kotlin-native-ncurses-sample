@@ -2,3 +2,4 @@ headers = ncurses.h
 compilerOpts.linux = -I/usr/include
 compilerOpts.osx = -I/opt/local/include
 linkerOpts = -lncurses
+linkerOpts.linux = -L/usr/lib/x86_64-linux-gnu -L/lib/x86_64-linux-gnu -lncurses

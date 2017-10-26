@@ -17,6 +17,16 @@ konanArtifacts {
     interop('ncurses')
 
     program('Test') {
+        srcFiles project.fileTree('src/main/kotlin')
+
+        target('macbook') {
+            srcFiles project.fileTree('src/main/osx')
+        }
+
+        target('linux') {
+            srcFiles project.fileTree('src/main/linux')
+        }
+
         libraries {
             artifact 'ncurses'
         }
